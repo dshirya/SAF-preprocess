@@ -45,9 +45,9 @@ def process_folder(dir_path: str, sort: str) -> Tuple[Dict[str, List[Dict[str, s
                 label_list = get_label_key(len(sorted_elements))
                 key_str = "".join(label_list)
                 compound_map[key_str].append({
-                    "filename": os.path.basename(file_path),
-                    "formula": "".join(sorted_elements),
-                    "structure": cif.structure,
+                    "Filename": os.path.basename(file_path),
+                    "Formula": "".join(sorted_elements),
+                    "Structure": cif.structure,
                 })
                 for i, el in enumerate(sorted_elements):
                     element_labels[f"{label_list[i]}_labels"].add(el)
