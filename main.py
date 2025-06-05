@@ -1,4 +1,6 @@
+#!filepath: main.py
 import os
+import re
 import logging
 import click
 import pandas as pd
@@ -35,29 +37,30 @@ def process_folder(dir_path: str, sort: str) -> Tuple[Dict[str, List[Dict[str, s
     for file_path in folder.get_file_paths(dir_path):
         try:
             cif = Cif(file_path)
-            elements = parse_formula_elements(cif.formula)
-            if 2 <= len(elements) <= 4:
-                sorted_elements = sorted(
-                    elements,
-                    key=lambda el: mendeleev_numbers.get(el, float("inf")),
+            parsed = parse_formula_elements(cif.formula)
+            symbols = [sym for sym, _ in parsed]
+            if 2 <= len(symbols) <= 4:
+                sorted_tuples = sorted(
+                    parsed,
+                    key=lambda pair: mendeleev_numbers.get(pair[0], float("inf")),
                     reverse=(sort == "desc"),
                 )
-                label_list = get_label_key(len(sorted_elements))
+                sorted_formula = "".join([f"{sym}{cnt}" for sym, cnt in sorted_tuples])
+                label_list = get_label_key(len(sorted_tuples))
                 key_str = "".join(label_list)
                 compound_map[key_str].append({
                     "Filename": os.path.basename(file_path),
-                    "Formula": "".join(sorted_elements),
+                    "Formula": sorted_formula,
                     "Structure": cif.structure,
                 })
-                for i, el in enumerate(sorted_elements):
-                    element_labels[f"{label_list[i]}_labels"].add(el)
+                for i, (sym, _) in enumerate(sorted_tuples):
+                    element_labels[f"{label_list[i]}_labels"].add(sym)
         except Exception as e:
             logging.warning(f"Failed to parse {file_path}: {e}")
     return compound_map, element_labels
 
-def parse_formula_elements(formula: str) -> List[str]:
-    import re
-    return re.findall(r"[A-Z][a-z]?", formula)
+def parse_formula_elements(formula: str) -> List[Tuple[str, str]]:
+    return re.findall(r"([A-Z][a-z]*)(\d*\.?\d*)", formula)
 
 def get_label_key(length: int) -> List[str]:
     return {
