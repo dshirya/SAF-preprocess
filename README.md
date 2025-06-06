@@ -39,6 +39,6 @@ python main.py
 - Sorts elements in each formula by Mendeleev number.
 - Supports only binary, ternary, and quaternary compounds.
 - Creates a `labels/` folder in each processed directory:
-  - `sorted_compounds.xlsx` with separate sheets per compound type (`AB`, `RMX`, `ABCD`).
-  - `element_labels.txt` listing unique element labels for each position (A, B, R, M, X, C, D).
+  - `sorted_compounds.xlsx` with separate sheets per compound type (`AB`, `RMX`, `ABCD`). - for CAF
+  - `element_labels.txt` listing unique element labels for each position (A, B, R, M, X, C, D). - for SAF
 - Uses logging for error handling and progress reporting.
